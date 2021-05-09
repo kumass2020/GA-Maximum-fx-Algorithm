@@ -58,15 +58,45 @@ def get_random_list():
     return r
 
 
-# random number와 누적 
+# random number와 누적 비교, v' 생성
 def compare_acc(v, q):
-    r = get_random_list()
-
-
-def crossover(v, p, crossover_rate):
+    v_ = [0 for i in range(10)]
     r = get_random_list()
     for i in range(10):
-        if
+        j = 0
+        while True:
+            if q[j] < r[i] <= q[j+1]:
+                v_[i] = v[j+1]
+                break
+            j = j + 1
+
+    return v_
+
+
+def crossover(v_, p, crossover_rate):
+    r = get_random_list()
+    tmp = sorted(p)
+    for i in range(10):
+        if p[i] == tmp[0]:
+            index1 = i
+        if p[i] == tmp[1]:
+            index2 = i
+    chromosome1 = bin(v_[index1])
+    chromosome2 = bin(v_[index2])
+    tmp3 = chromosome1
+
+    # crossover
+    chromosome1 = chromosome1[0:3] + chromosome2[3:8]
+    chromosome2 = chromosome2[0:3] + tmp3[3:8]
+
+    # int형으로 변환
+    chromosome1 = int(chromosome1, 2)
+    chromosome2 = int(chromosome2, 2)
+
+    v_[index1] = chromosome1
+    v_[index2] = chromosome2
+
+    return v_
 
 
 # print(v)
@@ -76,6 +106,6 @@ crossover_rate = 0.25
 v = init()
 f = evaluate(v)
 p, q = get_fitness(f)
-
-
+v_ = compare_acc(v, q)
+v_ = crossover(v_, p, crossover_rate)
 
