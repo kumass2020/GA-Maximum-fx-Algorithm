@@ -5,7 +5,17 @@ import random
 
 def calc(x):
     # y = x * sin(x)
-    y = 10 * int(x) - 100
+
+    # if int(x, 2) < 10:
+    #     x = bin(np.random.randint(10, 32))
+
+    y = 10 * int(str(x), 2) - 100
+
+    # 함수값 음수 나오면 안되는지..?
+    if y < 0:
+        y = 0
+        print("음수")
+
     return y
 
 
@@ -14,18 +24,17 @@ def init():
     print(v)
     for i in range(10):
         # v[i] = bin(np.random.randint(0, 32))
-        v[i] = format(np.random.randint(0, 32), 'b')
-        # v[i] = bin(random.randint(0, 32))
-        # format()
+
+        # v[i] = format(np.random.randint(10, 32), 'b')
+        v[i] = bin(np.random.randint(10, 32))
+
         # print(type(v[i]))
-        # tmp = format(v[i], 'b')
-        print('v[' + str(i) + ']: {0:0>5}'.format(v[i]))
-        # v[i] = initNum
+        print('v[' + str(i) + ']: {0:0>5}'.format((v[i])[2:]))
     return v
 
 
 def evaluate(v):
-    f = [0 for i in range(10)]
+    f = [str(0) for i in range(10)]
     for i in range(10):
         f[i] = calc(v[i])
     return f
@@ -46,8 +55,10 @@ def get_fitness(f):
 
     # Accumulated Probability
     for i in range(10):
-        q[i] += p[i]
-
+        if i == 0:
+            q[i] = p[i]
+        else:
+            q[i] = q[i-1] + p[i]
     return p, q
 
 
@@ -60,14 +71,13 @@ def get_random_list():
 
 # random number와 누적 비교, v' 생성
 def compare_acc(v, q):
-    v_ = [0 for i in range(10)]
+    v_ = [str(0) for i in range(10)]
     r = get_random_list()
     for i in range(10):
         j = 0
-        while True:
+        while j < 9:
             if q[j] < r[i] <= q[j+1]:
                 v_[i] = v[j+1]
-                break
             j = j + 1
 
     return v_
@@ -81,17 +91,13 @@ def crossover(v_, p, crossover_rate):
             index1 = i
         if p[i] == tmp[1]:
             index2 = i
-    chromosome1 = bin(v_[index1])
-    chromosome2 = bin(v_[index2])
+    chromosome1 = v_[index1]
+    chromosome2 = v_[index2]
     tmp3 = chromosome1
 
     # crossover
     chromosome1 = chromosome1[0:3] + chromosome2[3:8]
     chromosome2 = chromosome2[0:3] + tmp3[3:8]
-
-    # int형으로 변환
-    chromosome1 = int(chromosome1, 2)
-    chromosome2 = int(chromosome2, 2)
 
     v_[index1] = chromosome1
     v_[index2] = chromosome2
@@ -99,13 +105,38 @@ def crossover(v_, p, crossover_rate):
     return v_
 
 
+def mutate(v_, mutation_quantity):
+    index_list = [np.random.randint(0, 10) for i in range(10)]
+    for i in range(mutation_quantity):
+        randnum = np.random.randint(2, 8)
+        a = list(a)
+        if a[randnum] == '0':
+            a[randnum] = '1'
+        elif a[randnum]
+        v_[index_list] = (v_[index_list])
+
+
 # print(v)
 
+loop = 100
 crossover_rate = 0.25
+mutation_quantity = 5
 
 v = init()
-f = evaluate(v)
-p, q = get_fitness(f)
-v_ = compare_acc(v, q)
-v_ = crossover(v_, p, crossover_rate)
+
+for i in range(loop):
+    if i != 0:
+        v = v_
+        # f = []
+        # p = []
+        # q = []
+        # v_ = []
+
+    f = evaluate(v)
+    p, q = get_fitness(f)
+    v_ = compare_acc(v, q)
+    v_ = crossover(v_, p, crossover_rate)
+    print(q)
+    print(v_)
+
 
