@@ -6,19 +6,21 @@ import random
 def calc(x):
     # y = x * sin(x)
 
-    # if int(x, 2) < 10:
-    #     x = bin(np.random.randint(10, 32))
+    if int(x, 2) < 10:
+        x = bin(np.random.randint(10, 32))
 
+    # 함수
     y = 10 * int(str(x), 2) - 100
 
     # 함수값 음수 나오면 안되는지..?
     if y < 0:
         y = 0
-        print("음수")
+        # print("음수")
 
     return y
 
 
+# initialize
 def init():
     v = [0 for i in range(10)]
     print(v)
@@ -29,7 +31,7 @@ def init():
         v[i] = bin(np.random.randint(10, 32))
 
         # print(type(v[i]))
-        print('v[' + str(i) + ']: {0:0>5}'.format((v[i])[2:]))
+        # print('v[' + str(i) + ']: {0:0>5}'.format((v[i])[2:]))
     return v
 
 
@@ -62,6 +64,7 @@ def get_fitness(f):
     return p, q
 
 
+# 랜덤 리스트 생성
 def get_random_list():
     r = [0.0 for i in range(10)]
     r = np.random.rand(10)
@@ -83,9 +86,12 @@ def compare_acc(v, q):
     return v_
 
 
+# 염색체 꼬임
 def crossover(v_, p, crossover_rate):
     r = get_random_list()
     tmp = sorted(p)
+
+    # 바꿀 유전자 결정
     for i in range(10):
         if p[i] == tmp[0]:
             index1 = i
@@ -99,28 +105,38 @@ def crossover(v_, p, crossover_rate):
     chromosome1 = chromosome1[0:3] + chromosome2[3:8]
     chromosome2 = chromosome2[0:3] + tmp3[3:8]
 
+    # 기존 v'에 적용
     v_[index1] = chromosome1
     v_[index2] = chromosome2
 
     return v_
 
 
+# 변이
 def mutate(v_, mutation_quantity):
+    # 변이할 염색체 선택
     index_list = [np.random.randint(0, 10) for i in range(10)]
+
     for i in range(mutation_quantity):
+        # 변이할 유전자 선택
         randnum = np.random.randint(2, 8)
-        a = list(a)
-        if a[randnum] == '0':
-            a[randnum] = '1'
-        elif a[randnum]
-        v_[index_list] = (v_[index_list])
+        tmp_list = list(v_[index_list[i]])
+
+        # 0이면 1로, 1이면 0으로
+        if tmp_list[randnum] == '0':
+            tmp_list[randnum] = '1'
+        elif tmp_list[randnum] == '1':
+            tmp_list[randnum] = '0'
+
+        v_[index_list[i]] = ''.join(tmp_list)
 
 
 # print(v)
 
-loop = 100
+loop = 10
 crossover_rate = 0.25
 mutation_quantity = 5
+v_o = [str(0) for i in range(10)]
 
 v = init()
 
@@ -136,7 +152,10 @@ for i in range(loop):
     p, q = get_fitness(f)
     v_ = compare_acc(v, q)
     v_ = crossover(v_, p, crossover_rate)
-    print(q)
-    print(v_)
+
+    for j in range(10):
+        v_o[j] = '{0:0>5}'.format((v[j])[2:])
+    print("try:" + str(i) + " => " + str(v_o))
+    # print(q)
 
 
